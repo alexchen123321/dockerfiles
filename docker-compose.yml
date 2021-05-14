@@ -1,0 +1,127 @@
+version: '3'
+services:
+  web:
+    image: nginx:stable-alpine
+    container_name: nginxweb
+    ports:
+      - 80:80
+    volumes:
+      - ./mifun-backend:/home/wwwroot
+      - ./xcdnlive_backend/:/home/xcdnlive_backend/
+      - ./new-mifun-h5/build/:/home/new-mifun-h5/build
+      - ./mifun-h5/build/:/home/mifun-h5/build
+      - ./im-test/:/home/im-test
+      - ./nginx/conf/adminapi.conf:/etc/nginx/conf.d/adminapi.conf
+      - ./nginx/conf/www.conf:/etc/nginx/conf.d/www.conf
+      - ./nginx/conf/newwww.conf:/etc/nginx/conf.d/newwww.conf
+      - ./nginx/conf/xcdnwww.conf:/etc/nginx/conf.d/xcdnwww.conf
+      - ./nginx/conf/h5.conf:/etc/nginx/conf.d/h5.conf
+      - ./nginx/conf/newh5.conf:/etc/nginx/conf.d/newh5.conf
+      - ./nginx/conf/im.conf:/etc/nginx/conf.d/im.conf
+      - ./nginx/conf/xcdn.conf:/etc/nginx/conf.d/xcdn.conf
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - xbb
+  php:
+    image: php73:v04
+    container_name: xbbphp
+    volumes:
+      - ./mifun-backend:/home/wwwroot
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - xbb
+  phpcdn:
+    image: php73:v04
+    container_name: xbbphpcdn
+    volumes:
+      - ./xcdnlive_backend:/home/wwwroot
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - xbb
+  php01:
+    image: php73:v04
+    container_name: xbbphp01
+    volumes:
+      - ./im-test:/home/wwwroot
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - xbb
+  redis:
+    image: redis:6.0.11
+    container_name: xbbredis
+    environment:
+      TZ: 'Asia/Shanghai'
+    command: bash -c "chown redis /var/lib/redis && redis-server /etc/redis.conf"
+    sysctls:
+      - net.core.somaxconn=1024
+    volumes:
+      - ./redis/redis.conf:/etc/redis.conf
+      - ./redis/data/:/var/lib/redis
+    depends_on:
+      - db
+    ports:
+      - 6379:6379
+    restart: always
+    networks:
+      - xbb
+  mifunfrontweb:
+    image: yarndev:v02
+    container_name: mifunfrontweb
+    volumes:
+      - ./web:/home/web
+    command: npm run prd
+    networks:
+      - xbb
+  newmifunfrontweb:
+    image: yarndev:v02
+    container_name: newmifunfrontweb
+    volumes:
+      - ./newweb:/home/web
+    command: npm run prd
+    networks:
+      - xbb
+  xcdnmifunfrontweb:
+    image: yarndev:v02
+    container_name: xcdnmifunfrontweb
+    volumes:
+      - ./xcdnlive_web:/home/web
+    command: npm run prd
+    networks:
+      - xbb
+  db:
+    image: 'mysql/mysql-server:5.7'
+    restart: always
+    container_name: xbbmysql
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: V3yDD4kwq8i2hWzn
+      TZ: 'Asia/Shanghai'
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+      --max_allowed_packet=128M
+      --max_connections=1000
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+      --event_scheduler=1
+    ports:
+      - 3306:3306
+      - 33060:33060
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - xbb
+networks:
+  xbb:
+    external: false
