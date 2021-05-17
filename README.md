@@ -36,7 +36,10 @@
  2)container_name: 
  3) volumes: 由于Dockerfile中 WORKDIR 目录为/home/web，所以需要把实际的代码目录挂载到 /home/web
  ```
- 
+- PHP
+```
+
+```
  
  
  
