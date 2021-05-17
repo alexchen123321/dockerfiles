@@ -73,5 +73,5 @@ RUN sed -i  "s/www-data/www/g" /usr/local/etc/php-fpm.d/www.conf
 USER root
 
 # Expose port 9000 and start php-fpm server
-EXPOSE 9001
+EXPOSE 9000
 CMD ["php-fpm"]
