@@ -29,7 +29,9 @@ services:
     image: php73:v04
     container_name: xbbphpcdn
     volumes:
-      - ./xcdnlive_backend:/home/wwwroot
+      - ./xcdnlive_backend:/home/wwwroot/xcdnlive_backend
+      - ./mifun-backend:/home/wwwroot/mifun-backend
+      - ./im-test:/home/wwwroot/im-test
     restart: always
     depends_on:
       - db
