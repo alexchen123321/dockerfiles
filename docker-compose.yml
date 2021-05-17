@@ -25,31 +25,11 @@ services:
     restart: always
     networks:
       - xbb
-  php:
-    image: php73:v04
-    container_name: xbbphp
-    volumes:
-      - ./mifun-backend:/home/wwwroot
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - xbb
   phpcdn:
     image: php73:v04
     container_name: xbbphpcdn
     volumes:
       - ./xcdnlive_backend:/home/wwwroot
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - xbb
-  php01:
-    image: php73:v04
-    container_name: xbbphp01
-    volumes:
-      - ./im-test:/home/wwwroot
     restart: always
     depends_on:
       - db
