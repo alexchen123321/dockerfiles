@@ -1,4 +1,4 @@
-### dockerfiles
+### docker-compose.yml
 ```
 1.1 有组件Mysql(mysql-server:5.7)
         Redis(redis:6.0.11)
@@ -37,10 +37,27 @@
  3) volumes: 由于Dockerfile中 WORKDIR 目录为/home/web，所以需要把实际的代码目录挂载到 /home/web
  ```
 - PHP
+ <br> php:7.3-fpm-alpine  build from [Dockerfile](./php/Dockerfile)
 ```
+1)image:php73:v04 
+2)container_name: 
+3)volumes:  由于Dockerfile中 WORKDIR /home/wwwroot，所以需要把实际的代码目录挂载到 /home/wwwroot，
+            多个php项目需要都挂载到 volumes。通过nginx中的 替换 $document_root 实际路径
+            如此处的 ./mifun-backend:/home/wwwroot/xcdnlive_backend，./mifun-backend 为PHP代码路径
+            在nginx中为  fastcgi_param SCRIPT_FILENAME   /home/wwwroot/mifun-backend/public/$fastcgi_script_name
+            详见 nginx/conf/adminapi.conf
 
 ```
- 
+- Nginx(services name :web)
+```
+1)image: nginx:stable-alpine
+2)container_name
+3)volumes: 
+           a.PHP代码也需要挂载到容器内部，如./mifun-backend:/home/wwwroot，nginx和php都需要挂载代码目录，详见 nginx/conf/adminapi.conf
+           b.Nginx的vhost中需要挂载，本地目录为 ./nginx/conf，容器内目录为 /etc/nginx/conf.d/
+           c.日志目录 ./nginx/logs:/var/log/nginx
+           
+```
  
  
  
