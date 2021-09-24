@@ -1,0 +1,5 @@
+secretGenerator:
+- name: mysql-pass
+  namespace: middleware
+  literals:
+  - password='Agsmc8368!@#'
